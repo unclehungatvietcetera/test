@@ -3,6 +3,9 @@ pipeline {
   tools {
     "org.jenkinsci.plugins.docker.commons.tools.DockerTool" "latest"
   }
+  parameters {
+    string(name: "BRANCH", defaultValue: "main")
+  }
   stages {
     stage("PULL") {
       steps {
