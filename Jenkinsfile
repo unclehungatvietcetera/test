@@ -7,8 +7,15 @@ pipeline {
     stage("PULL") {
       steps {
         dir("/var/jenkins_home/workspace/test") {
-            git branch: "${params.BRANCH}", url: "https://github.com/unclehungatvietcetera/test"
-            echo "${params.BRANCH}"
+          git branch: "${params.BRANCH}", url: "https://github.com/unclehungatvietcetera/test"
+          npm install
+        }
+      }
+    }
+    stage("BUILD") {
+      steps {
+        dir("/var/jenkins_home/workspace/test") {
+          sh "docker build -t ttest -f Dockerfile ."
         }
       }
     }
