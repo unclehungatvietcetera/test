@@ -3,22 +3,29 @@ pipeline {
   tools {
     "org.jenkinsci.plugins.docker.commons.tools.DockerTool" "latest"
   }
-  parameters {
-    string(name: "BRANCH", defaultValue: "main")
-  }
   stages {
     stage("PULL") {
       steps {
-        dir("/var/jenkins_home/workspace/test") {
-          git branch: "${params.BRANCH}", url: "https://github.com/unclehungatvietcetera/test"
+        dir("{WORKSPACE}") {
+          git branch: "{BRANCH}", url: "https://github.com/unclehungatvietcetera/test"
         }
       }
     }
     stage("BUILD") {
       steps {
-        dir("/var/jenkins_home/workspace/test") {
+        dir("{WORKSPACE}") {
           sh "docker build -t ttest -f Dockerfile ."
         }
+      }
+    }
+    stage("PUSH") {
+      steps {
+        sh "docker tag ttest localhost:5000/ttest:latest"
+        sh "docker push localhost:5000/ttest:latest"
+        sh "docker image rm localhost:5000/ttest:latest"
+        sh "docker tag ttest localhost:5000/ttest:{GIT_COMMIT}"
+        sh "docker push localhost:5000/ttest:{GIT_COMMIT}"
+        sh "docker image rm localhost:5000/ttest:{GIT_COMMIT}"
       }
     }
   }
