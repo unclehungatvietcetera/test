@@ -7,6 +7,7 @@ pipeline {
     stage("ALL") {
       steps {
         script {
+          sh "echo ${params.CLEAN}"
           if (params.CLEAN) {
             dir("${WORKSPACE}") {
               sh "rm -rf *" 
